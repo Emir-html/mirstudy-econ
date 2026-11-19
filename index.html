@@ -1,6 +1,33 @@
 <!doctype html>
 <html lang="ru" data-theme="light">
   <head>
+<!--watchdog--><script>
+(function(){
+  var shown=false;
+  function root(){return document.getElementById('root')}
+  function show(msg){
+    if(shown)return;shown=true;
+    var d=document.createElement('div');d.id='ms-boot-fail';
+    d.style.cssText='position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:#07080b;color:#e8e8ef;font:16px/1.45 system-ui,sans-serif;z-index:99999;padding:24px;text-align:center';
+    d.innerHTML='<b style="font-size:20px">Тренажёр не загрузился</b><span style="max-width:520px;color:#a9a9b8"></span><button type="button" style="padding:10px 20px;border-radius:12px;border:0;background:#8b7cf6;color:#fff;font:600 15px system-ui,sans-serif;cursor:pointer">Обновить страницу</button>';
+    d.querySelector('span').textContent=msg;
+    d.querySelector('button').onclick=function(){location.reload()};
+    (document.body||document.documentElement).appendChild(d);
+  }
+  function retryOnce(){try{if(!sessionStorage.getItem('ms-boot-retry')){sessionStorage.setItem('ms-boot-retry','1');location.reload();return true}}catch(_){}return false}
+  window.addEventListener('error',function(e){
+    var t=e.target;
+    if(t&&t.tagName&&/^(SCRIPT|LINK)$/.test(t.tagName)&&/assets\/index-/.test(t.src||t.href||'')){
+      if(!retryOnce())show('Не удалось скачать файлы приложения — обычно помогает обновление страницы.');
+      return;
+    }
+    var m=(e&&e.message)||'';
+    setTimeout(function(){var r=root();if(r&&!r.children.length)show('Ошибка запуска: '+m)},1500);
+  },true);
+  setTimeout(function(){var r=root();if(r&&!r.children.length)show('Приложение долго не запускается. Попробуй обновить страницу.')},25000);
+  window.addEventListener('load',function(){setTimeout(function(){try{sessionStorage.removeItem('ms-boot-retry')}catch(_){}},15000)});
+})();
+</script><!--/watchdog-->
     <meta charset="utf-8" />
     <meta name="copyright" content="© 2026 МирСтади. Все права защищены." />
     <meta name="robots" content="noai, noimageai" />
