@@ -411,6 +411,7 @@ a.row:has(>.bw-lock)>svg{width:36px;height:36px}
 .ms-step{display:flex;flex-direction:column;gap:3px;min-width:0}
 .ms-step-h{font-weight:700;color:var(--text)}
 .ms-step-l{display:block;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.ms-step-c{display:block;margin:-1px 0 2px;font-size:13px;line-height:1.4;color:var(--text-muted)}
 /* Карточка формул — свой бирюзовый цвет, не совпадает с разобранными примерами */
 .ec-fx{--fx:#1F7A68;--fx-soft:rgba(31,122,104,.05);--fx-line:rgba(31,122,104,.35)}
 :root[data-theme=dark] .ec-fx{--fx:#3AC7B0;--fx-soft:rgba(58,199,176,.045);--fx-line:rgba(58,199,176,.35)}
