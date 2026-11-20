@@ -1883,3 +1883,48 @@ function MSRings(t, S) {
   }
   return s.jsx('svg', { className: 'tw-rings' + (I.r >= 1 ? ' done' : '') + (I.r >= 4 ? ' hot' : ''), width: S, height: S, viewBox: '0 0 ' + S + ' ' + S, 'aria-hidden': 'true', 'data-k': k, children: kids });
 }
+/* План урока в шапке: пункты — тихие ссылки на разделы (#sub-N), ★ — на практикум. */
+(function () {
+  if (typeof document === 'undefined' || window.__msJump) return; window.__msJump = 1;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function isStar(li) { var n = li.querySelector('.bz-num'); return !!(n && n.classList.contains('star')); }
+  function mark() {
+    var L = document.querySelectorAll('.bz-head ol > li:not(.ms-jump)');
+    for (var i = 0; i < L.length; i++) {
+      var li = L[i]; if (!target(li)) continue;
+      li.classList.add('ms-jump'); li.tabIndex = 0; li.setAttribute('role', 'link');
+      var t = li.lastElementChild; li.setAttribute('aria-label', 'Перейти к разделу: ' + (t ? t.textContent : ''));
+    }
+  }
+  function target(li) {
+    var art = li.closest('article') || document;
+    if (isStar(li)) return art.querySelector('.bz-practice-head, .bz-final');
+    var n = li.querySelector('.bz-num'), num = n ? parseInt(n.textContent, 10) : NaN;
+    var el = num ? art.querySelector('#sub-' + num) : null;
+    if (el) return el;
+    var plain = [].filter.call(li.parentElement.children, function (x) { return !isStar(x); });
+    return art.querySelectorAll('.bz-sub')[plain.indexOf(li)] || null;
+  }
+  function go(li) {
+    var el = target(li); if (!el) return;
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    el.classList.remove('ms-flash'); void el.offsetWidth; el.classList.add('ms-flash');
+    setTimeout(function () { el.classList.remove('ms-flash'); }, 1800);
+    setTimeout(function () {
+      var off = el.getBoundingClientRect().top - 72, atEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      if (Math.abs(off) > 24 && !(off > 0 && atEnd)) window.scrollBy({ top: off, behavior: 'auto' });
+    }, reduce ? 60 : 900);
+  }
+  var pend = 0;
+  new MutationObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; mark(); }); })
+    .observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('click', function (e) {
+    var li = e.target && e.target.closest && e.target.closest('.bz-head ol > li.ms-jump');
+    if (li) { e.preventDefault(); go(li); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var li = e.target && e.target.closest && e.target.closest('.bz-head ol > li.ms-jump');
+    if (li) { e.preventDefault(); go(li); }
+  });
+})();
