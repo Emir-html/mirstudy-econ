@@ -1931,3 +1931,18 @@ function MSRings(t, S) {
     if (li) { e.preventDefault(); go(li); }
   });
 })();
+/* Telegram Mini App: на github.io приложение открывается только внутри Telegram; на claude.ai ничего не меняется. */
+(function () {
+  if (typeof window === 'undefined' || window.__msTg) return; window.__msTg = 1;
+  var onPages = /github\.io$/.test(location.hostname);
+  var W = window.Telegram && window.Telegram.WebApp;
+  if (W && W.initData) { document.documentElement.classList.add('in-tg'); return; }
+  if (!onPages) return;
+  function gate() {
+    if (document.getElementById('ms-tg-gate')) return;
+    var d = document.createElement('div'); d.id = 'ms-tg-gate';
+    d.innerHTML = '<div class="g-in"><div class="g-logo">M</div><div class="g-t">МирСтади · Экономика</div><div class="g-p">Тренажёр открывается только в Telegram — через бота проекта.</div></div>';
+    document.body.appendChild(d);
+  }
+  if (document.body) gate(); else document.addEventListener('DOMContentLoaded', gate);
+})();
