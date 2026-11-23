@@ -2002,3 +2002,29 @@ function US(e, t, n, dv) {
   for (k in base) if (base[k] === undefined) delete base[k];
   return base;
 }
+/* Новая версия на сервере → сверху баннер «Обновить» (событие ms:updated), без переоткрытия приложения.
+   Сверяем имя своей сборки с тем, что в свежем index.html. На claude.ai не нужно — там версии меняет платформа. */
+(function () {
+  if (typeof window === 'undefined' || window.__msUpd || window.claude) return; window.__msUpd = 1;
+  function cur() {
+    var s = document.querySelector('script[type=module][src*="assets/index-"]');
+    var m = s && (s.getAttribute('src') || '').match(/index-([a-z0-9]+)\.js/);
+    return m && m[1];
+  }
+  var fired = false, busy = false;
+  function check() {
+    if (fired || busy || document.visibilityState !== 'visible') return;
+    var c = cur(); if (!c) return; busy = true;
+    fetch('./index.html?v=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.text() : ''; })
+      .then(function (t) {
+        var m = (t || '').match(/assets\/index-([a-z0-9]+)\.js/);
+        if (m && m[1] !== c) { fired = true; window.dispatchEvent(new Event('ms:updated')); }
+      })
+      .catch(function () {})
+      .then(function () { busy = false; });
+  }
+  setTimeout(check, 15000); setInterval(check, 120000);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') check(); });
+  window.addEventListener('focus', check);
+})();
