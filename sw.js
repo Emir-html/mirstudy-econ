@@ -1,6 +1,6 @@
 // Офлайн-режим сайта «МирСтади · Экономика»: всё нужное хранится на устройстве после первого открытия.
-const CACHE = "mirstudy-econ-c6cb894b08";
-const FILES = ["./", "assets/index-c2824091.css", "assets/index-c6cb894b.js", "favicon.svg", "icons/apple-touch-icon.png", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png", "index.html", "manifest.webmanifest", "tg-web-app.js"];
+const CACHE = "mirstudy-econ-b595ad9fac";
+const FILES = ["./", "assets/index-c2824091.css", "assets/index-b595ad9f.js", "favicon.svg", "icons/apple-touch-icon.png", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png", "index.html", "manifest.webmanifest", "tg-web-app.js"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
 });
